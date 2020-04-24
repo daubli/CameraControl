@@ -63,6 +63,6 @@ var serialPort = new SerialPort(conf.portName, {
 serialPort.on("open", function () {
   console.log('open serial communication');
     serialPort.on('data', function(data) {
-      onSerial(Buffer.from(msg, 'binary'));
+      onSerial(Buffer.from(data, 'binary'));
   });  
 }); 
