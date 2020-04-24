@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
     registerEventHandler();
+    loadPresetsFromLocalStorage();
 });
 
 const registerEventHandler = function () {
@@ -148,6 +149,7 @@ const createPreset = function(camera, preset) {
             presets[preset].v = message.data.charAt(17);
             presets[preset].w = message.data.charAt(19);
         }
+        storePresetsinLocalStorage();
     };
 
     let messageHandlerFocus = (message) => {
@@ -157,6 +159,7 @@ const createPreset = function(camera, preset) {
             presets[preset].j = message.data.charAt(9);
             presets[preset].k = message.data.charAt(11);
         }
+        storePresetsinLocalStorage();
     };
 
     let messageHandlerZoom = (m) => {
@@ -166,11 +169,22 @@ const createPreset = function(camera, preset) {
             presets[preset].z = m.data.charAt(9);
             presets[preset].g = m.data.charAt(11);
         }
+        storePresetsinLocalStorage();
     };
 
     sendCommand(camera, visca_inq.askPanTiltPos(), messageHandlerPanTilt);
     setTimeout(() => sendCommand(camera, visca_inq.askZoom(), messageHandlerZoom), 100);
     setTimeout(() => sendCommand(camera, visca_inq.askFocusPos(), messageHandlerFocus), 200);
+};
+
+const storePresetsinLocalStorage = function() {
+    window.localStorage.setItem("presets", JSON.stringify(presets));
+};
+
+const loadPresetsFromLocalStorage = function() {
+    if (window.localStorage.getItem("presets") !== null) {
+        presets = JSON.parse(window.localStorage.getItem("presets"));
+    }
 };
 
 const callPreset = function(camera, preset) {
