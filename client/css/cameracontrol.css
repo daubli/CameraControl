@@ -1,0 +1,80 @@
+body {
+	font-family: "Open Sans";
+}
+.grid-container {
+  display: inline-grid;
+  grid-template-columns: auto auto auto;
+  background-color: #2196F3;
+  padding: 10px;
+  width: 33%;
+}
+.grid-container.right {
+	float: right;
+}
+
+.grid-container.left {
+	float: left;
+}
+.grid-item {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  font-size: 30px;
+  text-align: center;
+}
+
+.control-btn {
+  border: none; /* Remove borders */
+  cursor: pointer; /* Mouse pointer on hover */
+  outline: none;
+  background: transparent;
+  width: 100%;
+  height: 100%;
+}
+
+.control-btn i {
+	font-size: 25px;
+}
+
+.control-btn:active i {
+	color: grey;
+}
+
+.focus-near i {
+	font-size: 20px;
+}
+
+.focus-far i{
+	font-size: 35px;
+}
+
+.preset-container {
+	margin-top: 30px;
+	display: inline-block;
+}
+
+.preset-container.left {
+	width: 34%;
+}
+
+.preset-container.right {
+	float: right;
+}
+
+.preset-container .title{
+	margin-top: 10px;
+}
+
+.preset-container .controls {
+	margin-top: 20px;
+	padding-bottom: 10px;
+}
+
+.preset-container .preset-button {
+  border: 1px sold grey; /* Remove borders */
+  cursor: pointer; /* Mouse pointer on hover */
+  outline: none;
+  background: transparent;
+  width: calc(32vw/5);
+  height: calc(32vw/5);
+}

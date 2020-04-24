@@ -1,0 +1,1 @@
+exports.portName = '/dev/tty.usbserial';

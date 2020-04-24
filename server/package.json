@@ -1,0 +1,17 @@
+{
+  "name": "serialvisca",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "http": "0.0.1-security",
+    "serialport": "^8.0.7",
+    "websocket": "^1.0.31"
+  }
+}
