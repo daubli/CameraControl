@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", function() {
     registerEventHandler();
     loadPresetsFromLocalStorage();
+    initControls();
+    loadSettings();
 });
 
 const registerEventHandler = function () {
@@ -34,6 +36,35 @@ const registerEventHandler = function () {
         document.querySelector("#call-preset-1-3").onclick = () => callPreset(1, 3);
         document.querySelector("#call-preset-1-4").onclick = () => callPreset(1, 4);
         document.querySelector("#call-preset-1-5").onclick = () => callPreset(1, 5);
+
+        document.querySelectorAll(".manual-exposure").forEach(item => item.onchange = eventHandler.manualExposureHandler ,false);
+
+        document.querySelector("#iris-1").oninput = function() {
+            sendCommand(1, visca_settings.irisDirect(this.value));
+            document.getElementById("iris-1-label").innerHTML = this.value;
+            storeSetting("iris-1", {value: this.value});
+        };
+
+        document.querySelector("#iris-2").oninput = function() {
+            sendCommand(2, visca_settings.irisDirect(this.value));
+            document.getElementById("iris-2-label").innerHTML = this.value;
+            storeSetting("iris-2", {value: this.value});
+        }
+
+        document.getElementById("pan-speed").oninput = function() {
+            let panSpeedVal = "\\x0" + parseInt(this.value).toString(16);
+            visca.speed.pan = eval('"' + panSpeedVal + '"');
+            document.getElementById("pan-speed-label").innerHTML = this.value;
+            storeSetting("pan-speed", {value: this.value});
+        }
+
+        document.getElementById("tilt-speed").oninput = function() {
+            debugger;
+            let tiltSpeedVal = "\\x0" + parseInt(this.value).toString(16);
+            visca.speed.tilt = eval('"' + tiltSpeedVal + '"');
+            document.getElementById("tilt-speed-label").innerHTML = this.value;
+            storeSetting("tilt-speed", {value: this.value});
+        }
     }
 
     document.querySelector("body").addEventListener("keydown", (event) => {
@@ -75,34 +106,54 @@ const registerEventHandler = function () {
                 sendCommand(2, visca.zoomOut());
                 break;
             case 49:
-                sendCommand(1, visca.direct(presets[1]));
+                if (presets[1] !== null) {
+                    sendCommand(1, visca.direct(presets[1]));
+                }
                 break;
             case 50:
-                sendCommand(1, visca.direct(presets[2]));
+                if (presets[2] !== null) {
+                    sendCommand(1, visca.direct(presets[2]));
+                }
                 break;
             case 51:
-                sendCommand(1, visca.direct(presets[3]));
+                if (presets[3] !== null) {
+                    sendCommand(1, visca.direct(presets[3]));
+                }
                 break;
             case 52:
-                sendCommand(1, visca.direct(presets[4]));
+                if (presets[4] !== null) {
+                    sendCommand(1, visca.direct(presets[4]));
+                }
                 break;
             case 53:
-                sendCommand(1, visca.direct(presets[5]));
+                if (presets[5] !== null) {
+                    sendCommand(1, visca.direct(presets[5]));
+                }
                 break;
             case 54:
-                sendCommand(2, visca.direct(presets[6]));
+                if (presets[6] !== null) {
+                    sendCommand(2, visca.direct(presets[6]));
+                }
                 break;
             case 55:
-                sendCommand(2, visca.direct(presets[7]));
+                if (presets[7] !== null) {
+                    sendCommand(2, visca.direct(presets[7]));
+                }
                 break;
             case 56:
-                sendCommand(2, visca.direct(presets[8]));
+                if (presets[8] !== null) {
+                    sendCommand(2, visca.direct(presets[8]));
+                }
                 break;
             case 57:
-                sendCommand(2, visca.direct(presets[9]));
+                if (presets[9] !== null) {
+                    sendCommand(2, visca.direct(presets[9]));
+                }
                 break;
             case 48:
-                sendCommand(2, visca.direct(presets[0]));
+                if (presets[0] !== null) {
+                    sendCommand(2, visca.direct(presets[0]));
+                }
                 break;
         }
     });
@@ -131,6 +182,23 @@ const registerEventHandler = function () {
                 break;
         }
     });
+};
+
+const eventHandler = {
+    manualExposureHandler: function() {
+        const camera = this.dataset.camera;
+        if (typeof camera === typeof undefined) {
+            return;
+        }
+        const value = this.checked;
+        if (value) {
+            sendCommand(camera, visca_settings.manualExposure());
+        } else {
+            sendCommand(camera, visca_settings.automaticExposure());
+        }
+        disableExposureControls(camera, !value);
+        storeSetting("manual-exposure-"+camera, {value: value});
+    }
 };
 
 const createPreset = function(camera, preset) {
@@ -177,6 +245,11 @@ const createPreset = function(camera, preset) {
     setTimeout(() => sendCommand(camera, visca_inq.askFocusPos(), messageHandlerFocus), 200);
 };
 
+const initControls = function() {
+    document.getElementById("iris-1-label").innerHTML = document.querySelector("#iris-1").value;
+    document.getElementById("iris-2-label").innerHTML = document.querySelector("#iris-1").value;
+};
+
 const storePresetsinLocalStorage = function() {
     window.localStorage.setItem("presets", JSON.stringify(presets));
 };
@@ -184,6 +257,59 @@ const storePresetsinLocalStorage = function() {
 const loadPresetsFromLocalStorage = function() {
     if (window.localStorage.getItem("presets") !== null) {
         presets = JSON.parse(window.localStorage.getItem("presets"));
+    }
+};
+
+const storeSetting = function(key, value) {
+    window.localStorage.setItem(key, JSON.stringify(value));
+};
+
+const disableExposureControls = function(camera, value) {
+    document.getElementById("iris-"+ camera).disabled = value;
+    document.getElementById("iris-"+ camera).disabled = value;
+};
+
+const loadManualExposureSetting = function(camera) {
+    let checked = JSON.parse(window.localStorage.getItem("manual-exposure-"+camera)).value;
+    document.querySelector(".manual-exposure[data-camera='"+camera+"']").checked = checked;
+    if (!checked) {
+        disableExposureControls(camera, true);
+    }
+};
+
+const loadSettings = function () {
+    if (window.localStorage.getItem("manual-exposure-1") !== null) {
+        loadManualExposureSetting(1);
+    }
+    if (window.localStorage.getItem("manual-exposure-2") !== null) {
+        loadManualExposureSetting(2);
+    }
+    if (window.localStorage.getItem("iris-1") !== null) {
+        let value = JSON.parse(window.localStorage.getItem("iris-1")).value;
+        document.querySelector("#iris-1").value = value;
+        document.querySelector("#iris-1-label").innerHTML = value;
+
+    }
+    if (window.localStorage.getItem("iris-2") !== null) {
+        let value = JSON.parse(window.localStorage.getItem("iris-2")).value;
+        document.querySelector("#iris-2").value = value;
+        document.querySelector("#iris-2-label").innerHTML = value;
+    }
+
+    if (window.localStorage.getItem("pan-speed") !== null) {
+        let value = JSON.parse(window.localStorage.getItem("pan-speed")).value;
+        let panSpeedVal = "\\x0" + parseInt(value).toString(16);
+        visca.speed.pan = eval('"' + panSpeedVal + '"');
+        document.getElementById("pan-speed").value = value;
+        document.getElementById("pan-speed-label").innerHTML = value;
+    }
+
+    if (window.localStorage.getItem("tilt-speed") !== null) {
+        let value = JSON.parse(window.localStorage.getItem("tilt-speed")).value;
+        let tiltSpeedVal = "\\x0" + parseInt(value).toString(16);
+        visca.speed.tilt = eval('"' + tiltSpeedVal + '"');
+        document.getElementById("tilt-speed").value = value;
+        document.getElementById("tilt-speed-label").innerHTML = value;
     }
 };
 

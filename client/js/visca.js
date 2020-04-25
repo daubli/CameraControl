@@ -1,7 +1,8 @@
-const panSpeed = "\x05";
-const tiltSpeed = "\x05";
-
 const visca = {
+    speed: {
+        pan: "\x0f",
+        tilt: "\x0f"
+    },
     focusNear: () => {
         return "\x01\x04\x08\x3b\xFF";
     },
@@ -15,16 +16,16 @@ const visca = {
         return "\x01\x06\x01\x03\x03\x03\x03\xFF";
     },
     up: () => {
-        return "\x01\x06\x01" + panSpeed + tiltSpeed +"\x03\x01\xFF";
+        return "\x01\x06\x01" + visca.speed.pan + visca.speed.tilt + "\x03\x01\xFF";
     },
     down: () => {
-        return "\x01\x06\x01" + panSpeed + tiltSpeed +"\x03\x02\xFF";
+        return "\x01\x06\x01" + visca.speed.pan + visca.speed.tilt + "\x03\x02\xFF";
     },
     left: () => {
-        return "\x01\x06\x01" + panSpeed + tiltSpeed +"\x01\x03\xFF";
+        return "\x01\x06\x01" + visca.speed.pan + visca.speed.tilt + "\x01\x03\xFF";
     },
     right: () => {
-        return "\x01\x06\x01" + panSpeed + tiltSpeed +"\x02\x03\xFF";
+        return "\x01\x06\x01" + visca.speed.pan + visca.speed.tilt + "\x02\x03\xFF";
     },
     direct: (preset) => {
         let packet = "\x01\x06\x20";
@@ -70,6 +71,67 @@ const visca = {
     },
     zoomStop: () => {
         return "\x01\x04\x07\x00\xFF";
+    }
+};
+
+const visca_settings = {
+    automaticExposure: () => {
+        return "\x01\x04\x39\x00\xFF";
+    },
+    manualExposure: () => {
+        return "\x01\x04\x39\x03\xFF";
+    },
+    irisDirect: (value) => {
+        let packet = "\x01\x04\x4b\x01\x00";
+        value = parseInt(value);
+        if (value > 15) {
+            let r = "\\x0" + value.toString(16).charAt(0);
+            packet += eval('"' + r + '"');
+            let s = "\\x0" + value.toString(16).charAt(1);
+            packet += eval('"' + s + '"');
+        } else {
+            packet += "\x00";
+            let s = "\\x0" + value.toString(16).charAt(0);
+            packet += eval('"' + s + '"');
+        }
+        packet += "\xFF";
+        return packet;
+    },
+    gainDirect: (p, q, r, s) => {
+        let packet = "\x01\x04\x4c";
+        p = "\\x0" + p.toString(16);
+        packet += eval('"' + p + '"');
+        q = "\\x0" + q.toString(16);
+        packet += eval('"' + q + '"');
+        r = "\\x0" + r.toString(16);
+        packet += eval('"' + r + '"');
+        s = "\\x0" + s.toString(16);
+        packet += eval('"' + s + '"') + "\xFF";
+        return packet;
+    },
+    backlightOn: () => {
+        return "\x01\x04\x33\x02\xFF";
+    },
+    backlightOff: () => {
+        return "\x01\x04\x33\x03\xFF";
+    },
+    gammaAuto: () => {
+        return "\x01\x04\x51\x02\xFF";
+    },
+    gammaManual: () => {
+        return "\x01\x04\x51\x03\xFF";
+    },
+    gammaDirect: (p, q, r, s) => {
+        let packet = "\x01\x04\x52";
+        p = "\\x0" + p.toString(16);
+        packet += eval('"' + p + '"');
+        q = "\\x0" + q.toString(16);
+        packet += eval('"' + q + '"');
+        r = "\\x0" + r.toString(16);
+        packet += eval('"' + r + '"');
+        s = "\\x0" + s.toString(16);
+        packet += eval('"' + s + '"') + "\xFF";
+        return packet;
     }
 };
 
