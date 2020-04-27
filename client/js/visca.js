@@ -4,10 +4,10 @@ const visca = {
         tilt: "\x0f"
     },
     focusNear: () => {
-        return "\x01\x04\x08\x3b\xFF";
+        return "\x01\x04\x08\x3a\xFF";
     },
     focusFar: () => {
-        return "\x01\x04\x08\x2b\xFF";
+        return "\x01\x04\x08\x2a\xFF";
     },
     focusStop: () => {
         return "\x01\x04\x08\x00\xFF";
@@ -75,6 +75,12 @@ const visca = {
 };
 
 const visca_settings = {
+    automaticFocus: () => {
+        return "\x01\x04\x38\x02\xFF";
+    },
+    manualFocus: () => {
+        return "\x01\x04\x38\x03\xFF";
+    },
     automaticExposure: () => {
         return "\x01\x04\x39\x00\xFF";
     },
@@ -121,16 +127,20 @@ const visca_settings = {
     gammaManual: () => {
         return "\x01\x04\x51\x03\xFF";
     },
-    gammaDirect: (p, q, r, s) => {
-        let packet = "\x01\x04\x52";
-        p = "\\x0" + p.toString(16);
-        packet += eval('"' + p + '"');
-        q = "\\x0" + q.toString(16);
-        packet += eval('"' + q + '"');
-        r = "\\x0" + r.toString(16);
-        packet += eval('"' + r + '"');
-        s = "\\x0" + s.toString(16);
-        packet += eval('"' + s + '"') + "\xFF";
+    gammaDirect: (value) => {
+        let packet = "\x01\x04\x52\x00\x00\x00";
+        value = parseInt(value);
+        let s = "\\x0" + value.toString(16).charAt(0);
+        packet += eval('"' + s + '"');
+        packet += "\xFF";
+        // p = "\\x0" + p.toString(16);
+        // packet += eval('"' + p + '"');
+        // q = "\\x0" + q.toString(16);
+        // packet += eval('"' + q + '"');
+        // r = "\\x0" + r.toString(16);
+        // packet += eval('"' + r + '"');
+        // s = "\\x0" + s.toString(16);
+        // packet += eval('"' + s + '"') + "\xFF";
         return packet;
     }
 };

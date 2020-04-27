@@ -91,6 +91,15 @@
 			<div class="title">Settings</div>
 			<div class="controls">
 				<div>
+					<span class="settings-title">Manual Focus</span>
+					<label class="switch">
+						<input type="checkbox" class="manual-focus" data-camera="1">
+						<span class="slider"></span>
+					</label>
+				</div>
+			</div>
+			<div class="controls">
+				<div>
 					<span class="settings-title">Manual Exposure</span>
 					<label class="switch">
 						<input type="checkbox" class="manual-exposure" data-camera="1">
@@ -99,16 +108,38 @@
 				</div>
 				<div class="iris">
 					<label class="settings-title" for="iris-1">Iris</label>
-					<input type="range" min="1" max="50" value="40" class="" id="iris-1">
+					<input type="range" min="1" max="50" value="40" id="iris-1">
 					<span id="iris-1-label">1</span>
 				</div>
 			</div>
+			<div class="controls">
+				<div>
+					<span class="settings-title">Manual Gamma</span>
+					<label class="switch">
+						<input type="checkbox" class="manual-gamma" data-camera="1">
+						<span class="slider"></span>
+					</label>
+				</div>
+				<div class="iris">
+					<label class="settings-title" for="iris-1">Gamma</label>
+					<input type="range" min="0" max="7" value="0" id="gamma-1">
+					<span id="gamma-1-label">1</span>
+				</div>
+			</div>
 		</div>
-
 		<div class="settings-container middle"></div>
 
 		<div class="settings-container right">
 			<div class="title">Settings</div>
+			<div class="controls">
+				<div>
+					<span class="settings-title">Manual Focus</span>
+					<label class="switch">
+						<input type="checkbox" class="manual-focus" data-camera="2">
+						<span class="slider"></span>
+					</label>
+				</div>
+			</div>
 			<div class="controls">
 				<div class="manual-exposure">
 					<span class="settings-title">Manual Exposure</span>
@@ -123,8 +154,23 @@
 					<span id="iris-2-label">1</span>
 				</div>
 			</div>
+			<div class="controls">
+				<div>
+					<span class="settings-title">Manual Gamma</span>
+					<label class="switch">
+						<input type="checkbox" class="manual-gamma" data-camera="2">
+						<span class="slider"></span>
+					</label>
+				</div>
+				<div class="iris">
+					<label class="settings-title" for="iris-1">Gamma</label>
+					<input type="range" min="0" max="7" value="0" id="gamma-2">
+					<span id="gamma-2-label">1</span>
+				</div>
+			</div>
 		</div>
 	</div>
+</div>
 
 <script src="js/socket.js" type="text/javascript" charset="utf-8"></script>
 <script src="js/visca.js" type="text/javascript" charset="utf-8"></script>

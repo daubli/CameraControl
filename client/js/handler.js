@@ -37,6 +37,8 @@ const registerEventHandler = function () {
         document.querySelector("#call-preset-1-4").onclick = () => callPreset(1, 4);
         document.querySelector("#call-preset-1-5").onclick = () => callPreset(1, 5);
 
+        document.querySelectorAll(".manual-focus").forEach(item => item.onchange = eventHandler.manualFocus ,false);
+
         document.querySelectorAll(".manual-exposure").forEach(item => item.onchange = eventHandler.manualExposureHandler ,false);
 
         document.querySelector("#iris-1").oninput = function() {
@@ -49,14 +51,29 @@ const registerEventHandler = function () {
             sendCommand(2, visca_settings.irisDirect(this.value));
             document.getElementById("iris-2-label").innerHTML = this.value;
             storeSetting("iris-2", {value: this.value});
-        }
+        };
+
+
+        document.querySelector("#gamma-1").oninput = function() {
+            sendCommand(1, visca_settings.gammaDirect(this.value));
+            document.getElementById("gamma-1-label").innerHTML = this.value;
+            storeSetting("gamma-1", {value: this.value});
+        };
+
+        document.querySelector("#gamma-2").oninput = function() {
+            sendCommand(2, visca_settings.gammaDirect(this.value));
+            document.getElementById("gamma-2-label").innerHTML = this.value;
+            storeSetting("gamma-2", {value: this.value});
+        };
+
+        document.querySelectorAll(".manual-gamma").forEach(item => item.onchange = eventHandler.manualGammaHandler ,false);
 
         document.getElementById("pan-speed").oninput = function() {
             let panSpeedVal = "\\x0" + parseInt(this.value).toString(16);
             visca.speed.pan = eval('"' + panSpeedVal + '"');
             document.getElementById("pan-speed-label").innerHTML = this.value;
             storeSetting("pan-speed", {value: this.value});
-        }
+        };
 
         document.getElementById("tilt-speed").oninput = function() {
             debugger;
@@ -185,6 +202,19 @@ const registerEventHandler = function () {
 };
 
 const eventHandler = {
+    manualFocus: function () {
+        const camera = this.dataset.camera;
+        if (typeof camera === typeof undefined) {
+            return;
+        }
+        const value = this.checked;
+        if (value) {
+            sendCommand(camera, visca_settings.manualFocus());
+        } else {
+            sendCommand(camera, visca_settings.automaticFocus());
+        }
+        storeSetting("manual-focus-"+camera, {value: value});
+    },
     manualExposureHandler: function() {
         const camera = this.dataset.camera;
         if (typeof camera === typeof undefined) {
@@ -198,6 +228,21 @@ const eventHandler = {
         }
         disableExposureControls(camera, !value);
         storeSetting("manual-exposure-"+camera, {value: value});
+    },
+
+    manualGammaHandler: function() {
+        const camera = this.dataset.camera;
+        if (typeof camera === typeof undefined) {
+            return;
+        }
+        const value = this.checked;
+        if (value) {
+            sendCommand(camera, visca_settings.gammaManual());
+        } else {
+            sendCommand(camera, visca_settings.gammaAuto());
+        }
+        disableGammaControls(camera, !value);
+        storeSetting("manual-gamma-"+camera, {value: value});
     }
 };
 
@@ -247,7 +292,10 @@ const createPreset = function(camera, preset) {
 
 const initControls = function() {
     document.getElementById("iris-1-label").innerHTML = document.querySelector("#iris-1").value;
-    document.getElementById("iris-2-label").innerHTML = document.querySelector("#iris-1").value;
+    document.getElementById("iris-2-label").innerHTML = document.querySelector("#iris-2").value;
+    document.getElementById("gamma-1-label").innerHTML = document.querySelector("#gamma-1").value;
+    document.getElementById("gamma-2-label").innerHTML = document.querySelector("#gamma-2").value;
+
 };
 
 const storePresetsinLocalStorage = function() {
@@ -266,12 +314,29 @@ const storeSetting = function(key, value) {
 
 const disableExposureControls = function(camera, value) {
     document.getElementById("iris-"+ camera).disabled = value;
-    document.getElementById("iris-"+ camera).disabled = value;
+};
+
+const loadManualFocus = function(camera) {
+    let checked = JSON.parse(window.localStorage.getItem("manual-focus-"+camera)).value;
+    document.querySelector(".manual-focus[data-camera='"+camera+"']").checked = checked;
 };
 
 const loadManualExposureSetting = function(camera) {
     let checked = JSON.parse(window.localStorage.getItem("manual-exposure-"+camera)).value;
     document.querySelector(".manual-exposure[data-camera='"+camera+"']").checked = checked;
+    if (!checked) {
+        disableExposureControls(camera, true);
+    }
+};
+
+//TODO: refactor this stuff
+const disableGammaControls = function(camera, value) {
+    document.getElementById("gamma-"+ camera).disabled = value;
+};
+
+const loadManualGammaSetting = function(camera) {
+    let checked = JSON.parse(window.localStorage.getItem("manual-gamma-"+camera)).value;
+    document.querySelector(".manual-gamma[data-camera='"+camera+"']").checked = checked;
     if (!checked) {
         disableExposureControls(camera, true);
     }
@@ -284,16 +349,42 @@ const loadSettings = function () {
     if (window.localStorage.getItem("manual-exposure-2") !== null) {
         loadManualExposureSetting(2);
     }
+
+    if (window.localStorage.getItem("manual-focus-1") !== null) {
+        loadManualFocus(1);
+    }
+    if (window.localStorage.getItem("manual-focus-2") !== null) {
+        loadManualFocus(2);
+    }
+
     if (window.localStorage.getItem("iris-1") !== null) {
         let value = JSON.parse(window.localStorage.getItem("iris-1")).value;
         document.querySelector("#iris-1").value = value;
         document.querySelector("#iris-1-label").innerHTML = value;
-
     }
     if (window.localStorage.getItem("iris-2") !== null) {
         let value = JSON.parse(window.localStorage.getItem("iris-2")).value;
         document.querySelector("#iris-2").value = value;
         document.querySelector("#iris-2-label").innerHTML = value;
+    }
+
+    if (window.localStorage.getItem("manual-gamma-1") !== null) {
+        loadManualGammaSetting(1);
+    }
+    if (window.localStorage.getItem("manual-gamme-2") !== null) {
+        loadManualGammaSetting(2);
+    }
+
+    if (window.localStorage.getItem("gamma-1") !== null) {
+        let value = JSON.parse(window.localStorage.getItem("gamma-1")).value;
+        document.querySelector("#gamma-1").value = value;
+        document.querySelector("#gamma-1-label").innerHTML = value;
+
+    }
+    if (window.localStorage.getItem("gamma-2") !== null) {
+        let value = JSON.parse(window.localStorage.getItem("gamma-2")).value;
+        document.querySelector("#gamma-2").value = value;
+        document.querySelector("#gamma-2-label").innerHTML = value;
     }
 
     if (window.localStorage.getItem("pan-speed") !== null) {
@@ -315,9 +406,9 @@ const loadSettings = function () {
 
 const callPreset = function(camera, preset) {
     if (typeof presets[preset] !== typeof undefined && presets[preset].camera === camera &&
-            typeof preset[preset].p !== typeof undefined &&
-            typeof preset[preset].h !== typeof undefined &&
-            typeof preset[preset].x !== typeof undefined) {
+            typeof presets[preset].p !== typeof undefined &&
+            typeof presets[preset].h !== typeof undefined &&
+            typeof presets[preset].x !== typeof undefined) {
         sendCommand(1, visca.direct(presets[preset]));
     }
 };
