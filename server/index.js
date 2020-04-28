@@ -24,7 +24,8 @@ wsServer.on('request', function(request) {
     let index = clients.push(connection) - 1;
 
     connection.on('message', function(message) {
-      onReceive(Buffer.from(message.utf8Data, 'binary'));
+        let parsed = (message.utf8Data.match(/[\s\S]{1,2}/g) || []).map(item => parseInt(item, 16));
+        onReceive(Buffer.from(parsed, 'binary'));
     });
 
     connection.on('close', function(connection) {

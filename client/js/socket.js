@@ -11,8 +11,7 @@ function sendCommand(camera, command, messageHandler) {
 	}
 
 
-	let cameraSegment = "\\x" + (0x80 | camera).toString(16);
-	let packet = eval('"' + cameraSegment + '"') + command;
+	let packet = "8" + camera + command + "ff";
 
 	socket.send(packet);
 }
