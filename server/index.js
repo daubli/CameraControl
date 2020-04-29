@@ -2,7 +2,7 @@
 process.title = 'node-serial-ws';
 
 // Websocket
-const webSocketsServerPort = 1337;
+const webSocketsServerPort = process.env.PORT || 1337;
 const webSocketServer = require('websocket').server;
 const http = require('http');
 const server = http.createServer((request, response) => {});
@@ -54,7 +54,7 @@ function onReceive(msg) {
 const SerialPort = require('serialport');
 const conf = require('./conf');
 
-var serialPort = new SerialPort(conf.portName, {
+var serialPort = new SerialPort(process.env.PORTNAME || conf.portName, {
     baudRate: 9600,
     databits: 8,
     parity: 'none',
