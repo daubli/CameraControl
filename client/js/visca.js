@@ -4,10 +4,10 @@ const visca = {
         tilt: "0f"
     },
     focusNear: () => {
-        return "0104083a";
+        return "01040830";
     },
     focusFar: () => {
-        return "0104082a";
+        return "01040820";
     },
     focusStop: () => {
         return "01040800";
@@ -26,6 +26,18 @@ const visca = {
     },
     right: () => {
         return "010601" + visca.speed.pan + visca.speed.tilt + "0203";
+    },
+    upleft: () => {
+        return "0106010" + visca.speed.pan + visca.speed.tilt + "0101";
+    },
+    upright: () => {
+        return "0106010" + visca.speed.pan + visca.speed.tilt + "0201";
+    },
+    downleft: () => {
+        return "0106010" + visca.speed.pan + visca.speed.tilt + "0102";
+    },
+    downright: () => {
+        return "0106010" + visca.speed.pan + visca.speed.tilt + "0202";
     },
     direct: (preset) => {
         let packet = "010620";

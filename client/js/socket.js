@@ -1,5 +1,7 @@
 const socket = new WebSocket('ws://localhost:1337');
 
+let lastPacket = null;
+
 function sendCommand(camera, command, messageHandler) {
 	if (typeof messageHandler === typeof undefined) {
 		socket.onmessage = (message) => {};
@@ -10,8 +12,10 @@ function sendCommand(camera, command, messageHandler) {
 		};
 	}
 
-
 	let packet = "8" + camera + command + "ff";
 
-	socket.send(packet);
+	if (packet !== lastPacket) {
+		socket.send(packet);
+		lastPacket = packet;
+	}
 }
