@@ -120,6 +120,9 @@ const visca_settings = {
         value = parseInt(value);
         packet += "0" + value.toString(16).charAt(0);
         return packet;
+    },
+    callLed: (switchOn) => {
+        return switchOn ? "01330101" : "01330100";
     }
 };
 
