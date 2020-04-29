@@ -4,7 +4,6 @@ const gamepadState = {
     activeCamera : 1
 };
 
-
 gamepad.on('connect', e => {
     console.log(`controller ${e.index} connected!`);
 });
