@@ -5,9 +5,9 @@ let lastPacket1 = null;
 let lastPacket2 = null;
 
 function sendCommand(camera, command, messageHandler) {
-	if (camera === 1 && command !== lastPacket1) {
+	if (parseInt(camera) === 1 && command !== lastPacket1) {
 		lastPacket1 = sendCommandOverSocket(socket, command, messageHandler);
-	} else if (camera === 2 && command !== lastPacket2) {
+	} else if (parseInt(camera) === 2 && command !== lastPacket2) {
 		lastPacket2 = sendCommandOverSocket(socket2, command, messageHandler);
 	}
 }
