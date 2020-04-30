@@ -1,7 +1,7 @@
 const visca = {
     speed: {
-        pan: "0f",
-        tilt: "0f"
+        pan: "0a",
+        tilt: "0a"
     },
     focusNear: () => {
         return "01040830";

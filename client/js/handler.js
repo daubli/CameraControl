@@ -69,16 +69,13 @@ const registerEventHandler = function () {
         document.querySelectorAll(".manual-gamma").forEach(item => item.onchange = eventHandler.manualGammaHandler ,false);
 
         document.getElementById("pan-speed").oninput = function() {
-            let panSpeedVal = "\\x0" + parseInt(this.value).toString(16);
-            visca.speed.pan = eval('"' + panSpeedVal + '"');
+            visca.speed.pan = "0" + parseInt(this.value).toString(16);
             document.getElementById("pan-speed-label").innerHTML = this.value;
             storeSetting("pan-speed", {value: this.value});
         };
 
         document.getElementById("tilt-speed").oninput = function() {
-            debugger;
-            let tiltSpeedVal = "\\x0" + parseInt(this.value).toString(16);
-            visca.speed.tilt = eval('"' + tiltSpeedVal + '"');
+            visca.speed.tilt = "0" + parseInt(this.value).toString(16);
             document.getElementById("tilt-speed-label").innerHTML = this.value;
             storeSetting("tilt-speed", {value: this.value});
         }
@@ -389,16 +386,14 @@ const loadSettings = function () {
 
     if (window.localStorage.getItem("pan-speed") !== null) {
         let value = JSON.parse(window.localStorage.getItem("pan-speed")).value;
-        let panSpeedVal = "\\x0" + parseInt(value).toString(16);
-        visca.speed.pan = eval('"' + panSpeedVal + '"');
+        visca.speed.pan = "0" + parseInt(value).toString(16);
         document.getElementById("pan-speed").value = value;
         document.getElementById("pan-speed-label").innerHTML = value;
     }
 
     if (window.localStorage.getItem("tilt-speed") !== null) {
         let value = JSON.parse(window.localStorage.getItem("tilt-speed")).value;
-        let tiltSpeedVal = "\\x0" + parseInt(value).toString(16);
-        visca.speed.tilt = eval('"' + tiltSpeedVal + '"');
+        visca.speed.tilt = "0" + parseInt(value).toString(16);
         document.getElementById("tilt-speed").value = value;
         document.getElementById("tilt-speed-label").innerHTML = value;
     }
@@ -406,11 +401,11 @@ const loadSettings = function () {
 
 const callPreset = function(camera, preset) {
     if (typeof presets[preset] !== typeof undefined && presets[preset].camera === camera &&
-            typeof presets[preset].p !== typeof undefined &&
-            typeof presets[preset].h !== typeof undefined &&
-            typeof presets[preset].x !== typeof undefined) {
+        typeof presets[preset].p !== typeof undefined &&
+        typeof presets[preset].h !== typeof undefined &&
+        typeof presets[preset].x !== typeof undefined) {
         sendCommand(1, visca.direct(presets[preset]));
     }
 };
 
-let presets = new Array(10);
+let presets = new Array(10).fill(null);
