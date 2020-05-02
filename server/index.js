@@ -61,9 +61,21 @@ var serialPort = new SerialPort(process.env.PORTNAME || conf.portName, {
     stopbits: 1
 });
 
-serialPort.on("open", function () {
+let serialBuffer = null;
+
+serialPort.on('open', function () {
   console.log('open serial communication');
     serialPort.on('data', function(data) {
-      onSerial(Buffer.from(data, 'binary'));
+      let buffer = Buffer.from(data, 'binary');
+      if (buffer != null) {
+        serialBuffer = Buffer.concat([serialBuffer, buffer]);
+      } else {
+        serialBuffer = buffer;
+      }
+
+      if (buffer[buffer.length-1].toString(16) === 'ff') {
+          onSerial(serialBuffer);
+          serialBuffer = null;
+      }
   });  
 }); 
