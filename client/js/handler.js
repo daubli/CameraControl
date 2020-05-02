@@ -53,6 +53,17 @@ const registerEventHandler = function () {
             storeSetting("iris-2", {value: this.value});
         };
 
+        document.querySelector("#gain-1").oninput = function() {
+            sendCommand(1, visca_settings.gainDirect(this.value));
+            document.getElementById("gain-1-label").innerHTML = this.value;
+            storeSetting("gain-1", {value: this.value});
+        };
+
+        document.querySelector("#gain-2").oninput = function() {
+            sendCommand(2, visca_settings.gainDirect(this.value));
+            document.getElementById("gain-2-label").innerHTML = this.value;
+            storeSetting("gain-2", {value: this.value});
+        };
 
         document.querySelector("#gamma-1").oninput = function() {
             sendCommand(1, visca_settings.gammaDirect(this.value));
@@ -67,6 +78,20 @@ const registerEventHandler = function () {
         };
 
         document.querySelectorAll(".manual-gamma").forEach(item => item.onchange = eventHandler.manualGammaHandler ,false);
+
+        document.querySelectorAll(".manual-wb").forEach(item => item.onchange = eventHandler.manualWbHandler ,false);
+
+        document.querySelector("#wb-1").oninput = function() {
+            sendCommand(1, visca_settings.wbDirect(this.value));
+            document.getElementById("wb-1-label").innerHTML = this.value;
+            storeSetting("wb-1", {value: this.value});
+        };
+
+        document.querySelector("#wb-2").oninput = function() {
+            sendCommand(2, visca_settings.wbDirect(this.value));
+            document.getElementById("wb-2-label").innerHTML = this.value;
+            storeSetting("wb-2", {value: this.value});
+        };
 
         document.getElementById("pan-speed").oninput = function() {
             visca.speed.pan = "0" + parseInt(this.value).toString(16);
@@ -240,6 +265,21 @@ const eventHandler = {
         }
         disableGammaControls(camera, !value);
         storeSetting("manual-gamma-"+camera, {value: value});
+    },
+
+    manualWbHandler: function() {
+        const camera = this.dataset.camera;
+        if (typeof camera === typeof undefined) {
+            return;
+        }
+        const value = this.checked;
+        if (value) {
+            sendCommand(camera, visca_settings.wbManual());
+        } else {
+            sendCommand(camera, visca_settings.wbAuto());
+        }
+        disableWbControls(camera, !value);
+        storeSetting("manual-wb-"+camera, {value: value});
     }
 };
 
@@ -259,7 +299,7 @@ const createPreset = function(camera, preset) {
             presets[preset].v = message.data.charAt(17);
             presets[preset].w = message.data.charAt(19);
         }
-        storePresetsinLocalStorage();
+        storePresetsInLocalStorage();
     };
 
     let messageHandlerFocus = (message) => {
@@ -269,7 +309,7 @@ const createPreset = function(camera, preset) {
             presets[preset].j = message.data.charAt(9);
             presets[preset].k = message.data.charAt(11);
         }
-        storePresetsinLocalStorage();
+        storePresetsInLocalStorage();
     };
 
     let messageHandlerZoom = (m) => {
@@ -279,7 +319,7 @@ const createPreset = function(camera, preset) {
             presets[preset].z = m.data.charAt(9);
             presets[preset].g = m.data.charAt(11);
         }
-        storePresetsinLocalStorage();
+        storePresetsInLocalStorage();
     };
 
     sendCommand(camera, visca_inq.askPanTiltPos(), messageHandlerPanTilt);
@@ -292,10 +332,13 @@ const initControls = function() {
     document.getElementById("iris-2-label").innerHTML = document.querySelector("#iris-2").value;
     document.getElementById("gamma-1-label").innerHTML = document.querySelector("#gamma-1").value;
     document.getElementById("gamma-2-label").innerHTML = document.querySelector("#gamma-2").value;
-
+    document.getElementById("gain-1-label").innerHTML = document.querySelector("#gain-1").value;
+    document.getElementById("gain-2-label").innerHTML = document.querySelector("#gain-2").value;
+    document.getElementById("wb-1-label").innerHTML = document.querySelector("#wb-1").value;
+    document.getElementById("wb-2-label").innerHTML = document.querySelector("#wb-2").value;
 };
 
-const storePresetsinLocalStorage = function() {
+const storePresetsInLocalStorage = function() {
     window.localStorage.setItem("presets", JSON.stringify(presets));
 };
 
@@ -311,6 +354,7 @@ const storeSetting = function(key, value) {
 
 const disableExposureControls = function(camera, value) {
     document.getElementById("iris-"+ camera).disabled = value;
+    document.getElementById("gain-"+camera).disabled = value;
 };
 
 const loadManualFocus = function(camera) {
@@ -331,6 +375,10 @@ const disableGammaControls = function(camera, value) {
     document.getElementById("gamma-"+ camera).disabled = value;
 };
 
+const disableWbControls = function(camera, value) {
+    document.getElementById("wb-"+ camera).disabled = value;
+};
+
 const loadManualGammaSetting = function(camera) {
     let checked = JSON.parse(window.localStorage.getItem("manual-gamma-"+camera)).value;
     document.querySelector(".manual-gamma[data-camera='"+camera+"']").checked = checked;
@@ -338,6 +386,16 @@ const loadManualGammaSetting = function(camera) {
         disableExposureControls(camera, true);
     }
 };
+
+const loadManualWbSetting = function(camera) {
+    let checked = JSON.parse(window.localStorage.getItem("manual-wb-"+camera)).value;
+    document.querySelector(".manual-wb[data-camera='"+camera+"']").checked = checked;
+    if (!checked) {
+        disableWbControls(camera, true);
+    }
+};
+
+
 
 const loadSettings = function () {
     if (window.localStorage.getItem("manual-exposure-1") !== null) {
@@ -365,6 +423,17 @@ const loadSettings = function () {
         document.querySelector("#iris-2-label").innerHTML = value;
     }
 
+    if (window.localStorage.getItem("gain-1") !== null) {
+        let value = JSON.parse(window.localStorage.getItem("gain-1")).value;
+        document.querySelector("#gain-1").value = value;
+        document.querySelector("#gain-1-label").innerHTML = value;
+    }
+    if (window.localStorage.getItem("gain-2") !== null) {
+        let value = JSON.parse(window.localStorage.getItem("gain-2")).value;
+        document.querySelector("#gain-2").value = value;
+        document.querySelector("#gain-2-label").innerHTML = value;
+    }
+
     if (window.localStorage.getItem("manual-gamma-1") !== null) {
         loadManualGammaSetting(1);
     }
@@ -382,6 +451,25 @@ const loadSettings = function () {
         let value = JSON.parse(window.localStorage.getItem("gamma-2")).value;
         document.querySelector("#gamma-2").value = value;
         document.querySelector("#gamma-2-label").innerHTML = value;
+    }
+
+    if (window.localStorage.getItem("manual-wb-1") !== null) {
+        loadManualWbSetting(1);
+    }
+    if (window.localStorage.getItem("manual-wb-2") !== null) {
+        loadManualWbSetting(2);
+    }
+
+    if (window.localStorage.getItem("wb-1") !== null) {
+        let value = JSON.parse(window.localStorage.getItem("wb-1")).value;
+        document.querySelector("#wb-1").value = value;
+        document.querySelector("#wb-1-label").innerHTML = value;
+
+    }
+    if (window.localStorage.getItem("wb-2") !== null) {
+        let value = JSON.parse(window.localStorage.getItem("wb-2")).value;
+        document.querySelector("#wb-2").value = value;
+        document.querySelector("#wb-2-label").innerHTML = value;
     }
 
     if (window.localStorage.getItem("pan-speed") !== null) {

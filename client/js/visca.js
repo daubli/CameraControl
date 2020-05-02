@@ -95,12 +95,16 @@ const visca_settings = {
         }
         return packet;
     },
-    gainDirect: (p, q, r, s) => {
-        let packet = "01044c";
-        packet += "0" + p.toString(16);
-        packet += "0" + q.toString(16);
-        packet += "0" + r.toString(16);
-        packet += "0" + s.toString(16);
+    gainDirect: (value) => {
+        let packet = "01044c0000";
+        value = parseInt(value);
+        if (value > 15) {
+            packet += "0" + value.toString(16).charAt(0);
+            packet += "0" + value.toString(16).charAt(1);
+        } else {
+            packet += "00";
+            packet += "0" + value.toString(16).charAt(0);
+        }
         return packet;
     },
     backlightOn: () => {
@@ -117,6 +121,18 @@ const visca_settings = {
     },
     gammaDirect: (value) => {
         let packet = "010452000000";
+        value = parseInt(value);
+        packet += "0" + value.toString(16).charAt(0);
+        return packet;
+    },
+    wbAuto: () => {
+        return "01043500"
+    },
+    wbManual: () => {
+        return "01043506"
+    },
+    wbDirect: (value) => {
+        let packet = "010475000000";
         value = parseInt(value);
         packet += "0" + value.toString(16).charAt(0);
         return packet;
