@@ -67,7 +67,7 @@ serialPort.on('open', function () {
   console.log('open serial communication');
     serialPort.on('data', function(data) {
       let buffer = Buffer.from(data, 'binary');
-      if (buffer != null) {
+      if (serialBuffer != null) {
         serialBuffer = Buffer.concat([serialBuffer, buffer]);
       } else {
         serialBuffer = buffer;
