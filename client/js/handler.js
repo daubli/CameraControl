@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 const registerEventHandler = function () {
-
     for (let i = 1; i < 3; i++) {
         document.querySelector("#focus-near-"+i).addEventListener("mousedown", () => sendCommand(i, visca.focusNear()));
         document.querySelector("#focus-near-"+i).addEventListener("mouseup", () => sendCommand(i, visca.focusStop()));
@@ -36,6 +35,18 @@ const registerEventHandler = function () {
         document.querySelector("#call-preset-1-3").onclick = () => callPreset(1, 3);
         document.querySelector("#call-preset-1-4").onclick = () => callPreset(1, 4);
         document.querySelector("#call-preset-1-5").onclick = () => callPreset(1, 5);
+
+        document.querySelector("#set-preset-1-1").onclick = () => createPreset(2, 6);
+        document.querySelector("#set-preset-1-2").onclick = () => createPreset(2, 7);
+        document.querySelector("#set-preset-1-3").onclick = () => createPreset(2, 8);
+        document.querySelector("#set-preset-1-4").onclick = () => createPreset(2, 9);
+        document.querySelector("#set-preset-1-5").onclick = () => createPreset(2, 0);
+
+        document.querySelector("#call-preset-1-1").onclick = () => callPreset(2, 6);
+        document.querySelector("#call-preset-1-2").onclick = () => callPreset(2, 7);
+        document.querySelector("#call-preset-1-3").onclick = () => callPreset(2, 8);
+        document.querySelector("#call-preset-1-4").onclick = () => callPreset(2, 9);
+        document.querySelector("#call-preset-1-5").onclick = () => callPreset(2, 0);
 
         document.querySelectorAll(".manual-focus").forEach(item => item.onchange = eventHandler.manualFocus ,false);
 
@@ -360,6 +371,11 @@ const disableExposureControls = function(camera, value) {
 const loadManualFocus = function(camera) {
     let checked = JSON.parse(window.localStorage.getItem("manual-focus-"+camera)).value;
     document.querySelector(".manual-focus[data-camera='"+camera+"']").checked = checked;
+    if (value) {
+        sendCommand(camera, visca_settings.manualFocus());
+    } else {
+        sendCommand(camera, visca_settings.automaticFocus());
+    }
 };
 
 const loadManualExposureSetting = function(camera) {
@@ -367,6 +383,9 @@ const loadManualExposureSetting = function(camera) {
     document.querySelector(".manual-exposure[data-camera='"+camera+"']").checked = checked;
     if (!checked) {
         disableExposureControls(camera, true);
+        sendCommand(camera, visca_settings.automaticExposure());
+    } else {
+        sendCommand(camera, visca_settings.manualExposure());
     }
 };
 
@@ -384,6 +403,9 @@ const loadManualGammaSetting = function(camera) {
     document.querySelector(".manual-gamma[data-camera='"+camera+"']").checked = checked;
     if (!checked) {
         disableExposureControls(camera, true);
+        sendCommand(camera, visca_settings.gammaAuto());
+    } else {
+        sendCommand(camera, visca_settings.gammaManual());
     }
 };
 
@@ -392,6 +414,9 @@ const loadManualWbSetting = function(camera) {
     document.querySelector(".manual-wb[data-camera='"+camera+"']").checked = checked;
     if (!checked) {
         disableWbControls(camera, true);
+        sendCommand(camera, visca_settings.wbAuto());
+    } else {
+        sendCommand(camera, visca_settings.wbManual());
     }
 };
 
@@ -464,7 +489,6 @@ const loadSettings = function () {
         let value = JSON.parse(window.localStorage.getItem("wb-1")).value;
         document.querySelector("#wb-1").value = value;
         document.querySelector("#wb-1-label").innerHTML = value;
-
     }
     if (window.localStorage.getItem("wb-2") !== null) {
         let value = JSON.parse(window.localStorage.getItem("wb-2")).value;
@@ -492,7 +516,7 @@ const callPreset = function(camera, preset) {
             typeof presets[preset].p !== typeof undefined &&
             typeof presets[preset].h !== typeof undefined &&
             typeof presets[preset].x !== typeof undefined) {
-        sendCommand(1, visca.direct(presets[preset]));
+        sendCommand(camera, visca.direct(presets[preset]));
     }
 };
 
