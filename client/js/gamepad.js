@@ -6,6 +6,7 @@ const gamepadState = {
 
 gamepad.on('connect', e => {
     console.log(`controller ${e.index} connected!`);
+    document.getElementById("indicator-1").setAttribute("style", "background-color: red");
 });
 
 gamepad.on('press', 'button_1', () => {
@@ -38,10 +39,14 @@ gamepad.on('press', 'button_4', () => {
 
 gamepad.on('press', 'shoulder_top_left ', () => {
     gamepadState.activeCamera = 1;
+    document.getElementById("indicator-1").setAttribute("style", "background-color: red");
+    document.getElementById("indicator-2").setAttribute("style", "background-color: white");
 });
 
 gamepad.on('press', 'shoulder_top_right ', () => {
     gamepadState.activeCamera = 2;
+    document.getElementById("indicator-1").setAttribute("style", "background-color: white");
+    document.getElementById("indicator-2").setAttribute("style", "background-color: red");
 });
 
 gamepad.on('press', 'shoulder_bottom_left ', () => {
