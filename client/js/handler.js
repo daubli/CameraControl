@@ -48,6 +48,14 @@ const registerEventHandler = function () {
         document.querySelector("#call-preset-1-4").onclick = () => callPreset(2, 9);
         document.querySelector("#call-preset-1-5").onclick = () => callPreset(2, 0);
 
+        document.querySelectorAll(".set-button").forEach(
+            item => {
+                addEventListener("input", function(event) {
+                    document.getElementById( event.target.id.replace("set", "call")).textContent = event.target.textContent;
+                });
+            }
+        );
+
         document.querySelectorAll(".manual-focus").forEach(item => item.onchange = eventHandler.manualFocus ,false);
 
         document.querySelectorAll(".manual-exposure").forEach(item => item.onchange = eventHandler.manualExposureHandler ,false);
@@ -156,52 +164,72 @@ const registerEventHandler = function () {
                 sendCommand(2, visca.zoomOut());
                 break;
             case 49:
-                if (presets[1] !== null) {
+                if (event.ctrlKey) {
+                    createPreset(1, 1);
+                } else if (presets[1] !== null) {
                     sendCommand(1, visca.direct(presets[1]));
                 }
                 break;
             case 50:
-                if (presets[2] !== null) {
+                if (event.ctrlKey) {
+                    createPreset(1, 2);
+                } else if (presets[2] !== null) {
                     sendCommand(1, visca.direct(presets[2]));
                 }
                 break;
             case 51:
-                if (presets[3] !== null) {
+                if (event.ctrlKey) {
+                    createPreset(1, 3);
+                } else if (presets[3] !== null) {
                     sendCommand(1, visca.direct(presets[3]));
                 }
                 break;
             case 52:
-                if (presets[4] !== null) {
+                if (event.ctrlKey) {
+                    createPreset(1, 4);
+                } else if (presets[4] !== null) {
                     sendCommand(1, visca.direct(presets[4]));
                 }
                 break;
             case 53:
-                if (presets[5] !== null) {
+                if (event.ctrlKey) {
+                    createPreset(1, 5);
+                } else if (presets[5] !== null) {
                     sendCommand(1, visca.direct(presets[5]));
                 }
                 break;
             case 54:
-                if (presets[6] !== null) {
+                if (event.ctrlKey) {
+                    createPreset(2, 6);
+                } else if (presets[6] !== null) {
                     sendCommand(2, visca.direct(presets[6]));
                 }
                 break;
             case 55:
-                if (presets[7] !== null) {
+                if (event.ctrlKey) {
+                    createPreset(2,7);
+                } else if (presets[7] !== null) {
                     sendCommand(2, visca.direct(presets[7]));
                 }
                 break;
             case 56:
-                if (presets[8] !== null) {
+                if (event.ctrlKey) {
+                    createPreset(2, 8);
+                } else if (presets[8] !== null) {
                     sendCommand(2, visca.direct(presets[8]));
                 }
                 break;
             case 57:
-                if (presets[9] !== null) {
+                if (event.ctrlKey) {
+                    createPreset(2, 9);
+                } else if (presets[9] !== null) {
                     sendCommand(2, visca.direct(presets[9]));
                 }
                 break;
             case 48:
-                if (presets[0] !== null) {
+                if (event.ctrlKey) {
+                    createPreset(2, 0);
+                } else if (presets[0] !== null) {
                     sendCommand(2, visca.direct(presets[0]));
                 }
                 break;
