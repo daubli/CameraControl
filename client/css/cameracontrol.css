@@ -93,6 +93,11 @@ body {
     padding-top: 15px;
 }
 
+.settings-container.middle {
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
+
 .settings-container .controls {
     maring-top: 40px;
 }

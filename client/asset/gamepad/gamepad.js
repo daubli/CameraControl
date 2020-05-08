@@ -82,7 +82,7 @@
             },
             axes: {
                 'stick_axis_left': [0, 2],
-                'stick_axis_right': [2, 4]
+                'stick_axis_right': [4, 6]
             },
             keyboard: {
                 'button_1': 32,

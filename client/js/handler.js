@@ -36,29 +36,35 @@ const registerEventHandler = function () {
         document.querySelector("#call-preset-1-4").onclick = () => callPreset(1, 4);
         document.querySelector("#call-preset-1-5").onclick = () => callPreset(1, 5);
 
-        document.querySelector("#set-preset-1-1").onclick = () => createPreset(2, 6);
-        document.querySelector("#set-preset-1-2").onclick = () => createPreset(2, 7);
-        document.querySelector("#set-preset-1-3").onclick = () => createPreset(2, 8);
-        document.querySelector("#set-preset-1-4").onclick = () => createPreset(2, 9);
-        document.querySelector("#set-preset-1-5").onclick = () => createPreset(2, 0);
+        document.querySelector("#set-preset-2-6").onclick = () => createPreset(2, 6);
+        document.querySelector("#set-preset-2-7").onclick = () => createPreset(2, 7);
+        document.querySelector("#set-preset-2-8").onclick = () => createPreset(2, 8);
+        document.querySelector("#set-preset-2-9").onclick = () => createPreset(2, 9);
+        document.querySelector("#set-preset-2-0").onclick = () => createPreset(2, 0);
 
-        document.querySelector("#call-preset-1-1").onclick = () => callPreset(2, 6);
-        document.querySelector("#call-preset-1-2").onclick = () => callPreset(2, 7);
-        document.querySelector("#call-preset-1-3").onclick = () => callPreset(2, 8);
-        document.querySelector("#call-preset-1-4").onclick = () => callPreset(2, 9);
-        document.querySelector("#call-preset-1-5").onclick = () => callPreset(2, 0);
-
-        document.querySelectorAll(".set-button").forEach(
-            item => {
-                addEventListener("input", function(event) {
-                    document.getElementById( event.target.id.replace("set", "call")).textContent = event.target.textContent;
-                });
-            }
-        );
+        document.querySelector("#call-preset-2-6").onclick = () => callPreset(2, 6);
+        document.querySelector("#call-preset-2-7").onclick = () => callPreset(2, 7);
+        document.querySelector("#call-preset-2-8").onclick = () => callPreset(2, 8);
+        document.querySelector("#call-preset-2-9").onclick = () => callPreset(2, 9);
+        document.querySelector("#call-preset-2-0").onclick = () => callPreset(2, 0);
 
         document.querySelectorAll(".manual-focus").forEach(item => item.onchange = eventHandler.manualFocus ,false);
-
         document.querySelectorAll(".manual-exposure").forEach(item => item.onchange = eventHandler.manualExposureHandler ,false);
+
+
+        document.querySelectorAll(".set-preset-name").forEach(item => {
+            item.oninput = (event) => {
+                if (typeof event.target !== typeof undefined) {
+                    let camera = event.target.dataset.camera;
+                    let preset = event.target.dataset.preset;
+                    document.getElementById("set-preset-" + camera + "-" + preset).textContent = event.target.value;
+                    document.getElementById("call-preset-" + camera + "-" + preset).textContent = event.target.value;
+                    storeSetting("preset-text-"+camera+"-"+preset, {value: event.target.value});
+                }
+            };
+            item.addEventListener('focus', () => disableKeyboardControls = true);
+            item.addEventListener('blur', () => disableKeyboardControls = false);
+        });
 
         document.querySelector("#iris-1").oninput = function() {
             sendCommand(1, visca_settings.irisDirect(this.value));
@@ -126,6 +132,9 @@ const registerEventHandler = function () {
     }
 
     document.querySelector("body").addEventListener("keydown", (event) => {
+        if (disableKeyboardControls) {
+            return;
+        }
         switch(event.keyCode) {
             case 87:
                 sendCommand(1, visca.up());
@@ -237,6 +246,9 @@ const registerEventHandler = function () {
     });
 
     document.querySelector("body").addEventListener("keyup", (event) => {
+        if (disableKeyboardControls) {
+            return;
+        }
         switch(event.keyCode) {
             case 87:
             case 65:
@@ -399,7 +411,7 @@ const disableExposureControls = function(camera, value) {
 const loadManualFocus = function(camera) {
     let checked = JSON.parse(window.localStorage.getItem("manual-focus-"+camera)).value;
     document.querySelector(".manual-focus[data-camera='"+camera+"']").checked = checked;
-    if (value) {
+    if (checked) {
         sendCommand(camera, visca_settings.manualFocus());
     } else {
         sendCommand(camera, visca_settings.automaticFocus());
@@ -537,10 +549,21 @@ const loadSettings = function () {
         document.getElementById("tilt-speed").value = value;
         document.getElementById("tilt-speed-label").innerHTML = value;
     }
+
+    //load button labels
+    for (let preset = 0; preset < 10; preset++) {
+        let camera = preset > 0 && preset < 6 ? "1" : "2";
+        if (window.localStorage.getItem("preset-text-"+camera+"-"+preset) !== null) {
+            let value = JSON.parse(window.localStorage.getItem("preset-text-"+camera+"-"+preset)).value;
+            document.getElementById("set-preset-"+camera+"-"+preset).textContent = value;
+            document.getElementById("call-preset-"+camera+"-"+preset).textContent = value;
+            document.querySelector(".set-preset-name[data-preset='"+preset+"']").value = value;
+        }
+    }
 };
 
 const callPreset = function(camera, preset) {
-    if (typeof presets[preset] !== typeof undefined && presets[preset].camera === camera &&
+    if (presets[preset] !== null && presets[preset].camera === camera &&
             typeof presets[preset].p !== typeof undefined &&
             typeof presets[preset].h !== typeof undefined &&
             typeof presets[preset].x !== typeof undefined) {
@@ -549,3 +572,4 @@ const callPreset = function(camera, preset) {
 };
 
 let presets = new Array(10).fill(null);
+let disableKeyboardControls = false;
